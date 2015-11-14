@@ -1,0 +1,38 @@
+data<-read.table("SENIC.txt", header=T)
+y<-data$Nurses
+x<-data$AFS
+
+#Q1
+#Qa
+plot(y~x,xlim=c(0,80),ylim=c(0,600))
+lines(lowess(y~x))
+
+
+
+#Qb
+fit<-lm(y~x+I(x^2))
+a<-coef(fit)[1]
+b1<-coef(fit)[2]
+b2<-coef(fit)[3]
+y.hat<-a+b1*x+b2*x^2
+#plot(y.hat~x,xlim=c(0,80),ylim=c(0,600), type="l")
+#the reason why the previous plot geneates a lot of small lines is because the x's are not in the order from small to big.
+#thus, it helps to put the data in order first
+lines(x[order(x)], y.hat[order(x)],lty=10)
+legend(x=0, y=600, lty=c(1,10), legend=c("lowess","second order mean function"))
+
+
+#qc
+#how to test whether b2 is zero or not...?
+anova(fit)
+
+
+#qe
+plot(resid(fit)~y.hat)
+abline(0,0)
+
+plot(resid(fit)~x)
+abline(0,0)
+
+qqnorm(resid(fit))
+qqline(resid(fit))
