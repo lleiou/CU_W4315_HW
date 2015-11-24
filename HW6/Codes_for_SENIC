@@ -1,8 +1,9 @@
+#Q1
 data<-read.table("SENIC.txt", header=T)
 y<-data$Nurses
 x<-data$AFS
 
-#Q1
+
 #Qa
 plot(y~x,xlim=c(0,80),ylim=c(0,600))
 lines(lowess(y~x))
@@ -27,6 +28,26 @@ legend(x=0, y=600, lty=c(1,10), legend=c("lowess","second order mean function"))
 anova(fit)
 
 
+#QD
+y1<-y[data$MS==1]
+
+y2<-y[data$MS==2]
+
+x1<-x[data$MS==1]
+
+x2<-x[data$MS==2]
+
+fit1<-lm(y1~x1)
+fit2<-lm(y2~x2)
+
+
+predict(fit1, data.frame(x1=30), interval="predict")
+predict(fit1, data.frame(x1=60), interval="predict")
+predict(fit2, data.frame(x2=30), interval="predict")
+predict(fit2, data.frame(x2=60), interval="predict")
+
+
+
 #qe
 plot(resid(fit)~y.hat)
 abline(0,0)
@@ -36,3 +57,135 @@ abline(0,0)
 
 qqnorm(resid(fit))
 qqline(resid(fit))
+
+
+
+#Q2
+data<-read.table("SENIC.txt", header=T)
+y<-data$Nurses
+x<-data$AFS
+
+#2b
+fit<-lm(y~x)
+library(alr3)
+library(car)
+library(alr3)
+inverse.response.plot(fit)
+
+
+
+library(MASS)
+boxcox(fit)
+
+#2c
+y2<-log(y)
+fit2<-lm(y2~x)
+summary(fit2)
+
+
+
+
+#2D
+
+a<-summary(fit2)$coefficient[1]
+b<-summary(fit2)$coefficient[2]
+yhat<-a+b*x
+
+plot(resid(fit2)~yhat)
+abline(0,0)
+
+
+qqnorm(resid(fit2))
+qqline(resid(fit2))
+
+
+
+#2E
+#Don;t know if it is correct...
+#fit3<-lm(y~x+I(x^2))
+#anova(fit3,fit2)
+
+
+#2F
+
+
+y1<-log(y[data$MS==1])
+
+y2<-log(y[data$MS==2])
+
+x1<-x[data$MS==1]
+
+x2<-x[data$MS==2]
+
+fit1<-lm(y1~x1)
+fit2<-lm(y2~x2)
+
+
+predict(fit1, data.frame(x1=30), interval="predict")
+predict(fit1, data.frame(x1=60), interval="predict")
+predict(fit2, data.frame(x2=30), interval="predict")
+predict(fit2, data.frame(x2=60), interval="predict")
+
+
+
+#Q3
+#Q3A
+data<-read.table("SENIC.txt", header=T)
+y<-data$Risk
+x1<-data$Stay
+x2<-data$Age
+x3<-data$Xray
+x4<-as.factor(data$MS-1)
+
+#Q3B
+pairs(y~x1+x2+x3,pch=data$MS)
+
+
+
+#Q3C
+fit1<-lm(y~x1+x2+x3+x4)
+fit2<-lm(y~x1+x2+x3+x4+x1:x4+x2:x4+x3:x4)
+
+summary(fit1)
+summary(fit2)
+
+anova(fit1,fit2)
+
+#Q3D
+
+anova(fit1)
+summary(fit1)
+
+confint(fit1)
+
+
+#Q4
+#4A
+
+data<-read.table("SENIC.txt", header=T)
+y<-data$Stay
+x1<-data$Age
+x2<-data$Cult
+x3<-data$Cen
+x4<-data$AFS
+x5<-as.factor(data$Reg)
+
+pairs(y~x1+x2+x3+x4)
+
+#4b
+fit<-lm(y~x1+x2+x3+x4+x5)
+summary(fit)
+
+
+#4C
+fit<-lm(y~x1+x2+x3+x4+x5)
+summary(fit)$coefficient
+confint(fit, level=0.99)
+
+
+
+#4D
+fit2<-lm(y~x1+x2+x3+x4)
+anova(fit,fit2)
+
+
